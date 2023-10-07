@@ -10,16 +10,23 @@ using UnityEngine;
 using GHPC.Camera;
 using GHPC.Player;
 using GHPC.Vehicle;
+using GHPC.Equipment;
+using GHPC;
 
 namespace T_72B1
 {
-    public class T72MOD:MelonMod
+    public class T72MOD : MelonMod
     {
         AmmoClipCodexScriptable clip_codex_3bm32;
         AmmoType.AmmoClip clip_3bm32;
         AmmoCodexScriptable ammo_codex_3bm32;
         AmmoType ammo_3bm32;
         AmmoType ammo_3bm15;
+
+        ArmorType armor_textolite;
+
+        ArmorCodexScriptable armor_codex_superTextolite;
+        ArmorType armor_superTextolite;
 
         GameObject[] vic_gos;
         GameObject gameManager;
@@ -63,7 +70,7 @@ namespace T_72B1
                 }
             }
         }
-       public override void OnSceneWasInitialized(int buildIndex, string sceneName)
+        public override void OnSceneWasInitialized(int buildIndex, string sceneName)
         {
             if (sceneName == "LOADER_INITIAL" || sceneName == "MainMenu2_Scene") return;
 
@@ -77,6 +84,14 @@ namespace T_72B1
                     if (s.AmmoType.Name == "3BM15 APFSDS-T")
                     {
                         ammo_3bm15 = s.AmmoType;
+                    }
+                }
+
+                foreach (ArmorCodexScriptable s in Resources.FindObjectsOfTypeAll(typeof(ArmorCodexScriptable)))
+                {
+                    if (s.ArmorType.Name == "glass textolite")
+                    {
+                        armor_textolite = s.ArmorType;
                     }
                 }
 
@@ -102,6 +117,32 @@ namespace T_72B1
                 clip_codex_3bm32 = ScriptableObject.CreateInstance<AmmoClipCodexScriptable>();
                 clip_codex_3bm32.name = "clip_3bm32";
                 clip_codex_3bm32.ClipType = clip_3bm32;
+
+                armor_superTextolite = new ArmorType();
+                ShallowCopy(armor_superTextolite, armor_textolite);
+                armor_superTextolite.RhaeMultiplierCe = 1.2f;
+                armor_superTextolite.RhaeMultiplierKe = 0.8f;
+                armor_superTextolite.Name = "super textolite";
+
+                armor_codex_superTextolite = ScriptableObject.CreateInstance<ArmorCodexScriptable>();
+                armor_codex_superTextolite.hideFlags = HideFlags.DontUnloadUnusedAsset;
+                armor_codex_superTextolite.name = "super textolite";
+                armor_codex_superTextolite.ArmorType = armor_superTextolite;
+            }
+
+            foreach (GameObject armour in GameObject.FindGameObjectsWithTag("Penetrable"))
+            {
+                VariableArmor texolitePlate = armour.GetComponent<VariableArmor>();
+
+                if (texolitePlate == null) continue;
+                if (texolitePlate.Unit.FriendlyName != "T-72M1") continue;
+                if (texolitePlate.Name != "glass textolite layers") continue;
+
+                MelonLogger.Msg("ya");
+
+                MelonLogger.Msg(armor_codex_superTextolite);
+                FieldInfo armorPlate = typeof(VariableArmor).GetField("_armorType", BindingFlags.NonPublic | BindingFlags.Instance);
+                armorPlate.SetValue(texolitePlate, armor_codex_superTextolite);
             }
 
             foreach (GameObject vic_go in vic_gos)
@@ -138,6 +179,9 @@ namespace T_72B1
 
                     // convert ammo
                     LoadoutManager loadoutManager = vic.GetComponent<LoadoutManager>();
+                    WeaponsManager weaponsManager = vic.GetComponent<WeaponsManager>();
+                    WeaponSystemInfo mainGunInfo = weaponsManager.Weapons[0];
+                    WeaponSystem mainGun = mainGunInfo.Weapon;
 
                     loadoutManager.LoadedAmmoTypes[0] = clip_codex_3bm32;
 
@@ -151,9 +195,6 @@ namespace T_72B1
                     loadoutManager.SpawnCurrentLoadout();
 
                     PropertyInfo roundInBreech = typeof(AmmoFeed).GetProperty("AmmoTypeInBreech");
-                    WeaponsManager weaponsManager = vic.GetComponent<WeaponsManager>();
-                    WeaponSystemInfo mainGunInfo = weaponsManager.Weapons[0];
-                    WeaponSystem mainGun = mainGunInfo.Weapon;
                     roundInBreech.SetValue(mainGun.Feed, null);
 
                     MethodInfo refreshBreech = typeof(AmmoFeed).GetMethod("Start", BindingFlags.Instance | BindingFlags.NonPublic);
