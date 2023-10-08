@@ -132,9 +132,12 @@ namespace T_72B1
 
             foreach (GameObject armour in GameObject.FindGameObjectsWithTag("Penetrable"))
             {
+                if (armour == null) continue;
+
                 VariableArmor texolitePlate = armour.GetComponent<VariableArmor>();
 
                 if (texolitePlate == null) continue;
+                if (texolitePlate.Unit == null) continue;
                 if (texolitePlate.Unit.FriendlyName != "T-72M1") continue;
                 if (texolitePlate.Name != "glass textolite layers") continue;
 
