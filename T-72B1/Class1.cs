@@ -92,6 +92,7 @@ namespace T_72B1
         public override void OnUpdate()
         {
             if (!playerManager) return;
+            if (playerManager.CurrentPlayerWeapon == null) return;
             if (playerManager.CurrentPlayerWeapon.Name != "125mm gun 2A46M") return;
 
             FireControlSystem FCS = playerManager.CurrentPlayerWeapon.FCS;
@@ -102,6 +103,7 @@ namespace T_72B1
 
             if (FCS.CurrentAmmoType.Name == "9M119 Svir")
             {
+                FCS.UseDeltaD = false; 
                 particleSystem[0].transform.GetChild(0).transform.gameObject.SetActive(false);
                 particleSystem[0].transform.GetChild(1).transform.gameObject.SetActive(false);
                 particleSystem[0].transform.GetChild(3).transform.gameObject.SetActive(false);
@@ -111,6 +113,7 @@ namespace T_72B1
                 reticleTargetRange.SetValue(FCS.MainOptic.reticleMesh, 0);
             }
             else {
+                FCS.UseDeltaD = true;
                 particleSystem[0].transform.GetChild(0).transform.gameObject.SetActive(true);
                 particleSystem[0].transform.GetChild(1).transform.gameObject.SetActive(true);
                 particleSystem[0].transform.GetChild(3).transform.gameObject.SetActive(true);
@@ -187,6 +190,7 @@ namespace T_72B1
                 ammo_svit = new AmmoType();
                 ShallowCopy(ammo_svit, ammo_9m111);
                 ammo_svit.Name = "9M119 Svir";
+                ammo_svit.Guidance = AmmoType.GuidanceType.Laser;
                 ammo_svit.Caliber = 125;
                 ammo_svit.RhaPenetration = 750;
                 ammo_svit.MuzzleVelocity = 350;
@@ -195,7 +199,7 @@ namespace T_72B1
                 ammo_svit.SpallMultiplier = 1.35f;
                 ammo_svit.SpiralPower = 25;
                 ammo_svit.TntEquivalentKg = 4.6f; 
-                ammo_svit.TurnSpeed = 0.24f;
+                ammo_svit.TurnSpeed = 0.33f;
                 ammo_svit.RangedFuseTime = 11.5f;
                 ammo_svit.MaximumRange = 4000;
                 ammo_svit.ShotVisual = ammo_9m111.ShotVisual; 
