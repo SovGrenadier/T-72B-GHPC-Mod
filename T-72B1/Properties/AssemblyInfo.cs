@@ -4,7 +4,7 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using T_72B1;
 
-[assembly: MelonInfo(typeof(T72MOD), "T-72B", "1.0.0", "ATLAS and Schweiß")]
+[assembly: MelonInfo(typeof(T72MOD), "T-72B", "1.0.1", "ATLAS and Schweiß")]
 [assembly: MelonGame("Radian Simulations LLC", "GHPC")]
 
 // General Information about an assembly is controlled through the following

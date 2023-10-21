@@ -14,9 +14,9 @@ using GHPC.Equipment;
 using GHPC.Utility;
 using GHPC;
 using NWH.VehiclePhysics;
+using Reticle;
 
 // todo 
-// improve stab
 // prevent changing zero w/ atgm loaded 
 // reticle for atgm 
 // e 
@@ -39,7 +39,7 @@ namespace T_72B1
 
         AmmoType ammo_3bm15;
         AmmoType ammo_9m111;
-
+        AmmoType ammo_3of26; 
 
         ArmorType armor_textolite;
 
@@ -88,6 +88,36 @@ namespace T_72B1
                 }
             }
         }
+
+        public override void OnUpdate()
+        {
+            if (!playerManager) return;
+            if (playerManager.CurrentPlayerWeapon.Name != "125mm gun 2A46M") return;
+
+            FireControlSystem FCS = playerManager.CurrentPlayerWeapon.FCS;
+            ParticleSystem[] particleSystem = playerManager.CurrentPlayerWeapon.Weapon.MuzzleEffects;
+
+            FieldInfo reticleCurrentRange = typeof(ReticleMesh).GetField("curReticleRange", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static);
+            FieldInfo reticleTargetRange = typeof(ReticleMesh).GetField("targetReticleRange", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static);
+
+            if (FCS.CurrentAmmoType.Name == "9M119 Svir")
+            {
+                particleSystem[0].transform.GetChild(0).transform.gameObject.SetActive(false);
+                particleSystem[0].transform.GetChild(1).transform.gameObject.SetActive(false);
+                particleSystem[0].transform.GetChild(3).transform.gameObject.SetActive(false);
+
+                // set range to 0 and lock it 
+                reticleCurrentRange.SetValue(FCS.MainOptic.reticleMesh, 0);
+                reticleTargetRange.SetValue(FCS.MainOptic.reticleMesh, 0);
+            }
+            else {
+                particleSystem[0].transform.GetChild(0).transform.gameObject.SetActive(true);
+                particleSystem[0].transform.GetChild(1).transform.gameObject.SetActive(true);
+                particleSystem[0].transform.GetChild(3).transform.gameObject.SetActive(true);
+            }
+
+        }   
+
         public override void OnSceneWasInitialized(int buildIndex, string sceneName)
         {
             if (sceneName == "LOADER_INITIAL" || sceneName == "MainMenu2_Scene") return;
@@ -103,13 +133,15 @@ namespace T_72B1
                     {
                         ammo_3bm15 = s.AmmoType;
                     }
-                }
 
-                foreach (AmmoCodexScriptable s in Resources.FindObjectsOfTypeAll(typeof(AmmoCodexScriptable)))
-                {
                     if (s.AmmoType.Name == "9M111 Fagot")
                     {
                         ammo_9m111 = s.AmmoType;
+                    }
+
+                    if (s.AmmoType.Name == "3OF26 HEF-FS-T")
+                    {
+                        ammo_3of26 = s.AmmoType;
                     }
                 }
 
@@ -154,15 +186,19 @@ namespace T_72B1
                 // svit
                 ammo_svit = new AmmoType();
                 ShallowCopy(ammo_svit, ammo_9m111);
-                ammo_svit.Name = "9M119 Svit ATGM";
+                ammo_svit.Name = "9M119 Svir";
                 ammo_svit.Caliber = 125;
                 ammo_svit.RhaPenetration = 750;
                 ammo_svit.MuzzleVelocity = 350;
                 ammo_svit.Mass = 26f;
                 ammo_svit.ArmingDistance = 70;
-                ammo_svit.SpallMultiplier = 1.45f;
-                ammo_svit.TurnSpeed = 0.24f; 
-                ammo_svit.VisualModel = ammo_9m111.VisualModel; 
+                ammo_svit.SpallMultiplier = 1.35f;
+                ammo_svit.SpiralPower = 25;
+                ammo_svit.TntEquivalentKg = 4.6f; 
+                ammo_svit.TurnSpeed = 0.24f;
+                ammo_svit.RangedFuseTime = 11.5f;
+                ammo_svit.MaximumRange = 4000;
+                ammo_svit.ShotVisual = ammo_9m111.ShotVisual; 
 
                 ammo_codex_svit = ScriptableObject.CreateInstance<AmmoCodexScriptable>();
                 ammo_codex_svit.AmmoType = ammo_svit;
@@ -170,7 +206,7 @@ namespace T_72B1
 
                 clip_svit = new AmmoType.AmmoClip();
                 clip_svit.Capacity = 1;
-                clip_svit.Name = "9M119 Svit ATGM";
+                clip_svit.Name = "9M119 Svir";
                 clip_svit.MinimalPattern = new AmmoCodexScriptable[1];
                 clip_svit.MinimalPattern[0] = ammo_codex_svit;
 
@@ -223,7 +259,6 @@ namespace T_72B1
                     GameObject ammo_3bm32_vis = null;
                     GameObject ammo_svit_vis = null;
 
-
                     // generate visual models 
                     if (ammo_3bm32_vis == null)
                     {
@@ -236,13 +271,12 @@ namespace T_72B1
 
                     if (ammo_svit_vis == null)
                     {
-                        ammo_svit_vis = GameObject.Instantiate(ammo_3bm15.VisualModel);
+                        ammo_svit_vis = GameObject.Instantiate(ammo_3of26.VisualModel);
                         ammo_svit_vis.name = "Svit visual";
                         ammo_svit.VisualModel = ammo_svit_vis;
                         ammo_svit.VisualModel.GetComponent<AmmoStoredVisual>().AmmoType = ammo_svit;
                         ammo_svit.VisualModel.GetComponent<AmmoStoredVisual>().AmmoScriptable = ammo_codex_svit;
                     }
-
 
                     // rename to t72b
                     FieldInfo friendlyName = typeof(GHPC.Unit).GetField("_friendlyName", BindingFlags.NonPublic | BindingFlags.Instance);
@@ -251,11 +285,15 @@ namespace T_72B1
                     FieldInfo uniqueName = typeof(GHPC.Unit).GetField("_uniqueName", BindingFlags.NonPublic | BindingFlags.Instance);
                     uniqueName.SetValue(vic, "T-72B");
 
-                    // convert ammo
+                    // convert weapon system and FCS
                     LoadoutManager loadoutManager = vic.GetComponent<LoadoutManager>();
                     WeaponsManager weaponsManager = vic.GetComponent<WeaponsManager>();
                     WeaponSystemInfo mainGunInfo = weaponsManager.Weapons[0];
                     WeaponSystem mainGun = mainGunInfo.Weapon;
+
+                    mainGunInfo.FCS.MainOptic.slot.VibrationBlurScale = 0.0f;
+                    mainGunInfo.FCS.MainOptic.slot.VibrationShakeMultiplier = 0.2f;
+                    mainGunInfo.FCS.MainOptic.slot.OtherFovs = new float[] {3.5f}; 
 
                     mainGunInfo.Name = "125mm gun 2A46M";
                     FieldInfo codex = typeof(WeaponSystem).GetField("CodexEntry", BindingFlags.NonPublic | BindingFlags.Instance);
@@ -285,13 +323,13 @@ namespace T_72B1
                     GameObject guidance_computer_obj = new GameObject("guidance computer");
                     guidance_computer_obj.transform.parent = vic.transform;
                     guidance_computer_obj.AddComponent<MissileGuidanceUnit>();
-                    guidance_computer_obj.AddComponent<Reparent>(); 
 
-                    MissileGuidanceUnit computer = guidance_computer_obj.GetComponent<MissileGuidanceUnit>();
+                    guidance_computer_obj.AddComponent<Reparent>();
                     Reparent reparent = guidance_computer_obj.GetComponent<Reparent>();
                     reparent.NewParent = vic_go.transform.Find("---MESH---/HULL/TURRET").gameObject.transform;
                     typeof(Reparent).GetMethod("Awake", BindingFlags.Instance | BindingFlags.NonPublic).Invoke(reparent, new object[] {});
 
+                    MissileGuidanceUnit computer = guidance_computer_obj.GetComponent<MissileGuidanceUnit>();
                     computer.AimElement = mainGunInfo.FCS.AimTransform;
                     mainGun.GuidanceUnit = computer; 
 
