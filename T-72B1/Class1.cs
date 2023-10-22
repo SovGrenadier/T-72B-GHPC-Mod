@@ -17,7 +17,6 @@ using NWH.VehiclePhysics;
 using Reticle;
 
 // todo 
-// prevent changing zero w/ atgm loaded 
 // reticle for atgm 
 // e 
 
@@ -98,12 +97,13 @@ namespace T_72B1
             FireControlSystem FCS = playerManager.CurrentPlayerWeapon.FCS;
             ParticleSystem[] particleSystem = playerManager.CurrentPlayerWeapon.Weapon.MuzzleEffects;
 
-            FieldInfo reticleCurrentRange = typeof(ReticleMesh).GetField("curReticleRange", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static);
-            FieldInfo reticleTargetRange = typeof(ReticleMesh).GetField("targetReticleRange", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static);
+            FieldInfo reticleCurrentRange = typeof(ReticleMesh).GetField("curReticleRange", BindingFlags.NonPublic | BindingFlags.Instance);
+            FieldInfo reticleTargetRange = typeof(ReticleMesh).GetField("targetReticleRange", BindingFlags.NonPublic | BindingFlags.Instance);
+            PropertyInfo deltad = typeof(FireControlSystem).GetProperty("ActiveDeltaD", BindingFlags.Public | BindingFlags.Instance);
 
             if (FCS.CurrentAmmoType.Name == "9M119 Svir")
             {
-                FCS.UseDeltaD = false; 
+                deltad.SetValue(FCS, false);
                 particleSystem[0].transform.GetChild(0).transform.gameObject.SetActive(false);
                 particleSystem[0].transform.GetChild(1).transform.gameObject.SetActive(false);
                 particleSystem[0].transform.GetChild(3).transform.gameObject.SetActive(false);
@@ -113,7 +113,7 @@ namespace T_72B1
                 reticleTargetRange.SetValue(FCS.MainOptic.reticleMesh, 0);
             }
             else {
-                FCS.UseDeltaD = true;
+                deltad.SetValue(FCS, true);
                 particleSystem[0].transform.GetChild(0).transform.gameObject.SetActive(true);
                 particleSystem[0].transform.GetChild(1).transform.gameObject.SetActive(true);
                 particleSystem[0].transform.GetChild(3).transform.gameObject.SetActive(true);
@@ -159,7 +159,7 @@ namespace T_72B1
                 // 2a46m
                 gun_2a46m = ScriptableObject.CreateInstance<WeaponSystemCodexScriptable>();
                 gun_2a46m.name = "gun_2a46m";
-                gun_2a46m.CaliberMm = 120;
+                gun_2a46m.CaliberMm = 125;
                 gun_2a46m.FriendlyName = "125mm Gun 2A46M";
                 gun_2a46m.Type = WeaponSystemCodexScriptable.WeaponType.LargeCannon;
 
@@ -200,7 +200,8 @@ namespace T_72B1
                 ammo_svit.SpiralPower = 25;
                 ammo_svit.TntEquivalentKg = 4.6f; 
                 ammo_svit.TurnSpeed = 0.33f;
-                ammo_svit.RangedFuseTime = 11.5f;
+                ammo_svit.SpiralAngularRate = 1200f;
+                ammo_svit.RangedFuseTime = 12.5f;
                 ammo_svit.MaximumRange = 4000;
                 ammo_svit.ShotVisual = ammo_9m111.ShotVisual; 
 
@@ -295,6 +296,7 @@ namespace T_72B1
                     WeaponSystemInfo mainGunInfo = weaponsManager.Weapons[0];
                     WeaponSystem mainGun = mainGunInfo.Weapon;
 
+                    mainGun.Feed.ReloadDuringMissileTracking = true;
                     mainGunInfo.FCS.MainOptic.slot.VibrationBlurScale = 0.0f;
                     mainGunInfo.FCS.MainOptic.slot.VibrationShakeMultiplier = 0.2f;
                     mainGunInfo.FCS.MainOptic.slot.OtherFovs = new float[] {3.5f}; 
