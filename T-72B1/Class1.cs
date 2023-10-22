@@ -186,23 +186,26 @@ namespace T_72B1
                 clip_codex_3bm32.name = "clip_3bm32";
                 clip_codex_3bm32.ClipType = clip_3bm32;
 
-                // svit
+                // svir
                 ammo_svit = new AmmoType();
                 ShallowCopy(ammo_svit, ammo_9m111);
                 ammo_svit.Name = "9M119 Svir";
                 ammo_svit.Guidance = AmmoType.GuidanceType.Laser;
                 ammo_svit.Caliber = 125;
-                ammo_svit.RhaPenetration = 750;
+                ammo_svit.RhaPenetration = 800;
                 ammo_svit.MuzzleVelocity = 350;
                 ammo_svit.Mass = 26f;
                 ammo_svit.ArmingDistance = 70;
-                ammo_svit.SpallMultiplier = 1.35f;
-                ammo_svit.SpiralPower = 25;
+                ammo_svit.SpallMultiplier = 1.45f;
+                ammo_svit.SpiralPower = 17.5f;
                 ammo_svit.TntEquivalentKg = 4.6f; 
                 ammo_svit.TurnSpeed = 0.33f;
                 ammo_svit.SpiralAngularRate = 1200f;
                 ammo_svit.RangedFuseTime = 12.5f;
                 ammo_svit.MaximumRange = 4000;
+                ammo_svit.MaxSpallRha = 12f;
+                ammo_svit.MinSpallRha = 4f;
+                ammo_svit.CertainRicochetAngle = 3f;
                 ammo_svit.ShotVisual = ammo_9m111.ShotVisual; 
 
                 ammo_codex_svit = ScriptableObject.CreateInstance<AmmoCodexScriptable>();
