@@ -10,3 +10,5 @@ How to install:
 
 This mod will replace every T-72M1 with a T-72B, keep in mind that the model is unable to be changed at the moment, so you will need to use your imagination for now.
 For questions, contact me in the GHPC discord @SwissAdmiral.
+
+Last updated 23/10.
