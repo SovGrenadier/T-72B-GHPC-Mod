@@ -31,10 +31,10 @@ namespace T_72B1
         AmmoCodexScriptable ammo_codex_3bm32;
         AmmoType ammo_3bm32;
 
-        AmmoClipCodexScriptable clip_codex_svit;
-        AmmoType.AmmoClip clip_svit;
-        AmmoCodexScriptable ammo_codex_svit;
-        AmmoType ammo_svit;
+        AmmoClipCodexScriptable clip_codex_svir;
+        AmmoType.AmmoClip clip_svir;
+        AmmoCodexScriptable ammo_codex_svir;
+        AmmoType ammo_svir;
 
         AmmoType ammo_3bm15;
         AmmoType ammo_9m111;
@@ -187,45 +187,45 @@ namespace T_72B1
                 clip_codex_3bm32.ClipType = clip_3bm32;
 
                 // svir
-                ammo_svit = new AmmoType();
-                ShallowCopy(ammo_svit, ammo_9m111);
-                ammo_svit.Name = "9M119 Svir";
-                ammo_svit.Guidance = AmmoType.GuidanceType.Laser;
-                ammo_svit.Caliber = 125;
-                ammo_svit.RhaPenetration = 800;
-                ammo_svit.MuzzleVelocity = 350;
-                ammo_svit.Mass = 26f;
-                ammo_svit.ArmingDistance = 70;
-                ammo_svit.SpallMultiplier = 1.45f;
-                ammo_svit.SpiralPower = 17.5f;
-                ammo_svit.TntEquivalentKg = 4.6f; 
-                ammo_svit.TurnSpeed = 0.33f;
-                ammo_svit.SpiralAngularRate = 1200f;
-                ammo_svit.RangedFuseTime = 12.5f;
-                ammo_svit.MaximumRange = 4000;
-                ammo_svit.MaxSpallRha = 12f;
-                ammo_svit.MinSpallRha = 4f;
-                ammo_svit.CertainRicochetAngle = 3f;
-                ammo_svit.ShotVisual = ammo_9m111.ShotVisual; 
+                ammo_svir = new AmmoType();
+                ShallowCopy(ammo_svir, ammo_9m111);
+                ammo_svir.Name = "9M120 SVIR";
+                ammo_svir.Guidance = AmmoType.GuidanceType.Laser;
+                ammo_svir.Caliber = 125;
+                ammo_svir.RhaPenetration = 800;
+                ammo_svir.MuzzleVelocity = 350;
+                ammo_svir.Mass = 26f;
+                ammo_svir.ArmingDistance = 70;
+                ammo_svir.SpallMultiplier = 1.45f;
+                ammo_svir.SpiralPower = 17.5f;
+                ammo_svir.TntEquivalentKg = 4.6f; 
+                ammo_svir.TurnSpeed = 0.33f;
+                ammo_svir.SpiralAngularRate = 1200f;
+                ammo_svir.RangedFuseTime = 12.5f;
+                ammo_svir.MaximumRange = 4000;
+                ammo_svir.MaxSpallRha = 12f;
+                ammo_svir.MinSpallRha = 4f;
+                ammo_svir.CertainRicochetAngle = 3f;
+                ammo_svir.ShotVisual = ammo_9m111.ShotVisual; 
 
-                ammo_codex_svit = ScriptableObject.CreateInstance<AmmoCodexScriptable>();
-                ammo_codex_svit.AmmoType = ammo_svit;
-                ammo_codex_svit.name = "ammo_svit";
+                ammo_codex_svir = ScriptableObject.CreateInstance<AmmoCodexScriptable>();
+                ammo_codex_svir.AmmoType = ammo_svir;
+                ammo_codex_svir.name = "ammo_svir";
 
-                clip_svit = new AmmoType.AmmoClip();
-                clip_svit.Capacity = 1;
-                clip_svit.Name = "9M119 Svir";
-                clip_svit.MinimalPattern = new AmmoCodexScriptable[1];
-                clip_svit.MinimalPattern[0] = ammo_codex_svit;
+                clip_svir = new AmmoType.AmmoClip();
+                clip_svir.Capacity = 1;
+                clip_svir.Name = "9M120 SVIR";
+                clip_svir.MinimalPattern = new AmmoCodexScriptable[1];
+                clip_svir.MinimalPattern[0] = ammo_codex_svir;
 
-                clip_codex_svit = ScriptableObject.CreateInstance<AmmoClipCodexScriptable>();
-                clip_codex_svit.name = "clip_svit";
-                clip_codex_svit.ClipType = clip_svit;
+                clip_codex_svir = ScriptableObject.CreateInstance<AmmoClipCodexScriptable>();
+                clip_codex_svir.name = "clip_svir";
+                clip_codex_svir.ClipType = clip_svir;
 
                 armor_superTextolite = new ArmorType();
                 ShallowCopy(armor_superTextolite, armor_textolite);
                 armor_superTextolite.RhaeMultiplierCe = 1.2f;
-                armor_superTextolite.RhaeMultiplierKe = 0.885f;
+                armor_superTextolite.RhaeMultiplierKe = 0.89f;
                 armor_superTextolite.Name = "super textolite";
 
                 armor_codex_superTextolite = ScriptableObject.CreateInstance<ArmorCodexScriptable>();
@@ -265,7 +265,7 @@ namespace T_72B1
                     playerManager = gameManager.GetComponent<PlayerInput>();
 
                     GameObject ammo_3bm32_vis = null;
-                    GameObject ammo_svit_vis = null;
+                    GameObject ammo_svir_vis = null;
 
                     // generate visual models 
                     if (ammo_3bm32_vis == null)
@@ -277,13 +277,13 @@ namespace T_72B1
                         ammo_3bm32.VisualModel.GetComponent<AmmoStoredVisual>().AmmoScriptable = ammo_codex_3bm32;
                     }
 
-                    if (ammo_svit_vis == null)
+                    if (ammo_svir_vis == null)
                     {
-                        ammo_svit_vis = GameObject.Instantiate(ammo_3of26.VisualModel);
-                        ammo_svit_vis.name = "Svit visual";
-                        ammo_svit.VisualModel = ammo_svit_vis;
-                        ammo_svit.VisualModel.GetComponent<AmmoStoredVisual>().AmmoType = ammo_svit;
-                        ammo_svit.VisualModel.GetComponent<AmmoStoredVisual>().AmmoScriptable = ammo_codex_svit;
+                        ammo_svir_vis = GameObject.Instantiate(ammo_3of26.VisualModel);
+                        ammo_svir_vis.name = "svir visual";
+                        ammo_svir.VisualModel = ammo_svir_vis;
+                        ammo_svir.VisualModel.GetComponent<AmmoStoredVisual>().AmmoType = ammo_svir;
+                        ammo_svir.VisualModel.GetComponent<AmmoStoredVisual>().AmmoScriptable = ammo_codex_svir;
                     }
 
                     // rename to t72b
@@ -309,14 +309,14 @@ namespace T_72B1
                     codex.SetValue(mainGun, gun_2a46m);
 
                     loadoutManager.LoadedAmmoTypes[0] = clip_codex_3bm32;
-                    loadoutManager.LoadedAmmoTypes[2] = clip_codex_svit;
+                    loadoutManager.LoadedAmmoTypes[2] = clip_codex_svir;
 
                     // [0] = ap [1] = heat [2] = he 
                     for (int i = 0; i <= 2; i++)
                     {
                         GHPC.Weapons.AmmoRack rack = loadoutManager.RackLoadouts[i].Rack;
                         rack.ClipTypes[0] = clip_codex_3bm32.ClipType;
-                        rack.ClipTypes[2] = clip_codex_svit.ClipType;
+                        rack.ClipTypes[2] = clip_codex_svir.ClipType;
                         EmptyRack(rack);
                     }
 
