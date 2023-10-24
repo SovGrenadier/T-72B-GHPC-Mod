@@ -101,7 +101,7 @@ namespace T_72B1
             FieldInfo reticleTargetRange = typeof(ReticleMesh).GetField("targetReticleRange", BindingFlags.NonPublic | BindingFlags.Instance);
             PropertyInfo deltad = typeof(FireControlSystem).GetProperty("ActiveDeltaD", BindingFlags.Public | BindingFlags.Instance);
 
-            if (FCS.CurrentAmmoType.Name == "9M119 Svir")
+            if (FCS.CurrentAmmoType.Name == "9M120 SVIR")
             {
                 deltad.SetValue(FCS, false);
                 particleSystem[0].transform.GetChild(0).transform.gameObject.SetActive(false);
@@ -225,7 +225,7 @@ namespace T_72B1
                 armor_superTextolite = new ArmorType();
                 ShallowCopy(armor_superTextolite, armor_textolite);
                 armor_superTextolite.RhaeMultiplierCe = 1.2f;
-                armor_superTextolite.RhaeMultiplierKe = 0.89f;
+                armor_superTextolite.RhaeMultiplierKe = 0.95f;
                 armor_superTextolite.Name = "super textolite";
 
                 armor_codex_superTextolite = ScriptableObject.CreateInstance<ArmorCodexScriptable>();
