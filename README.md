@@ -1,4 +1,4 @@
-# T-72B1-GHPC-Mod
+# T-72B-GHPC-Mod
 
 This mod was created in close collaboration with Atlas, Github: (https://github.com/thebeninator).
 Use of any aspect of this mod is not for use in the development of any other mod unless permissed by the creator, as we take pride in being the first public mod for the game.
