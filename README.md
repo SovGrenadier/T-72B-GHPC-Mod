@@ -9,7 +9,7 @@ How to install:
 3. Drop the .dll and *unzipped* Kontakt1Assets folder in the mod folder of your GHPC game. Be sure you put the folder, and not all the files within.
 4. Run the .exe directly from the game directory. **IT WILL NOT WORK THORUGH STEAM!**
 
-This mod will replace every T-72M1 with a T-72B, keep in mind that the model is unable to be changed at the moment, so you will need to use your imagination for now.
+This mod will replace every T-72M1 with a T-72B.
 For questions, contact me in the GHPC discord under my username SwissAdmiral.
 
-Readme last updated 3/1/24.
+Readme last updated 29/6/24.
